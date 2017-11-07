@@ -8,8 +8,10 @@ This is a java mutation generation tool
 ### Mutate Operators
 You can find mutate operators defininations in [/src/render/assets/Operators.js](https://github.com/yanjiasen4/AST/blob/master/HW2/src/renderer/assets/Opeartor.js)
 
-### Build Setup
+### pre-installation
+[NodeJS](https://nodejs.org/en/) - v6.9.2 or higher
 
+### Build Setup
 ``` bash
 # install dependencies
 npm install

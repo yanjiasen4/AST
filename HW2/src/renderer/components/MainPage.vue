@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import Ops from '../assets/Opeartor'
+import Ops from '../assets/Operator'
 import fs from 'fs'
 
 import Mutator from '../core/Mutator'
@@ -27,7 +27,7 @@ export default {
     return {
       mutationOps: Ops.minimumOps,
       mutationOpsSetting: [],
-      javaCode: []
+      javaCode: ''
     }
   },
   methods: {
@@ -38,13 +38,12 @@ export default {
           console.log('error occured when opening file ', file.path)
         } else {
           _this.javaCode = data.split('\n')
+          _this.genMutation()
         }
       })
     },
     genMutation: function () {
-      let mutator = Mutator.createMutator()
-      mutator.readCode(this.javaCode)
-      mutator.config(this.mutationOpsSetting)
+      let mutator = Mutator.createMutator(this.javaCode, this.mutationOpsSetting)
       mutator.genMutation()
     }
   }

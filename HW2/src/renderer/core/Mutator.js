@@ -6,10 +6,14 @@ import JavaParser from './JavaParser'
  * config: mutation configuration
  */
 function Mutator (code, config) {
-  this.JavaParser = JavaParser.createJavaParser(code, config)
+  this.javaParser = JavaParser.createJavaParser(code, config)
 
   this.genMutation = function () {
-    // <TODO>
+    this.javaParser.parseOps()
+  }
+
+  this.getCode = function () {
+    return this.javaParser.data
   }
 }
 

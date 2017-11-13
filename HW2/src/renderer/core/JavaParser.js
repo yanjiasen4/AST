@@ -37,32 +37,139 @@ function JavaParser (data, config) {
       // ignore String definitions and inline star comments
 
       // AORU
-      let lastToken = ''
+      // let lastToken = ''
+      line = line.replace(/\/\/.*/g, '')
+      line = line.replace(/".*"/g, '')
+      line = line.replace(/'.*'/g, '')
       let inString = false
-      for (let j in line) {
+      for (let j = 0; j < line.length; j++) {
         let token = line[j]
         if (token === '\'' || token === '"') {
           inString = !inString
           continue
         }
         switch (token) {
-          case '+': {
-            if (lastToken === '+') {
+          case '+':
+            if (line[j + 1] === '+') {
               let muOp = new OpUnit(i, j, '++', OpType.AORU)
               this.opsPos.push(muOp)
-            }
-            break
-          }
-          case '-': {
-            if (lastToken === '-') {
-              let muOp = new OpUnit(i, j, '--', OpType.AORU)
+              j++
+            } else if (line[i + 1] === '=') {
+              let muOp = new OpUnit(i, j, '+=', OpType.AORS)
+              this.opsPos.push(muOp)
+              j++
+            } else {
+              let muOp = new OpUnit(i, j, '+', OpType.AORB)
               this.opsPos.push(muOp)
             }
             break
-          }
+          case '-':
+            if (line[i + 1] === '-') {
+              let muOp = new OpUnit(i, j, '--', OpType.AORU)
+              this.opsPos.push(muOp)
+              j++
+            } else if (line[i + 1] === '=') {
+              let muOp = new OpUnit(i, j, '-=', OpType.AORS)
+              this.opsPos.push(muOp)
+              j++
+            } else {
+              let muOp = new OpUnit(i, j, '-', OpType.AORB)
+              this.opsPos.push(muOp)
+            }
+            break
+          case '*':
+            if (line[i + 1] === '=') {
+              let muOp = new OpUnit(i, j, '*=', OpType.AORS)
+              this.opsPos.push(muOp)
+              j++
+            } else {
+              let muOp = new OpUnit(i, j, '*', OpType.AORB)
+              this.opsPos.push(muOp)
+            }
+            break
+          case '/':
+            if (line[i + 1] === '=') {
+              let muOp = new OpUnit(i, j, '/=', OpType.AORS)
+              this.opsPos.push(muOp)
+              j++
+            } else {
+              let muOp = new OpUnit(i, j, '/', OpType.AORB)
+              this.opsPos.push(muOp)
+            }
+            break
+          case '%':
+            if (line[i + 1] === '=') {
+              let muOp = new OpUnit(i, j, '%=', OpType.AORS)
+              this.opsPos.push(muOp)
+              j++
+            } else {
+              let muOp = new OpUnit(i, j, '%', OpType.AORB)
+              this.opsPos.push(muOp)
+            }
+            break
+          case '|':
+            if (line[i + 1] === '|') {
+              let muOp = new OpUnit(i, j, '||', OpType.LCR)
+              this.opsPos.push(muOp)
+              j++
+            }
+            break
+          case '&':
+            if (line[i + 1] === '&') {
+              let muOp = new OpUnit(i, j, '&&', OpType.LCR)
+              this.opsPos.push(muOp)
+              j++
+            }
+            break
+          case '<':
+            if (line[i + 1] === '=') {
+              let muOp = new OpUnit(i, j, '<=', OpType.ROR)
+              this.opsPos.push(muOp)
+              j++
+            } else {
+              let muOp = new OpUnit(i, j, '<', OpType.ROR)
+              this.opsPos.push(muOp)
+            }
+            break
+          case '>':
+            if (line[i + 1] === '=') {
+              let muOp = new OpUnit(i, j, '>=', OpType.ROR)
+              this.opsPos.push(muOp)
+              j++
+            } else {
+              let muOp = new OpUnit(i, j, '>', OpType.ROR)
+              this.opsPos.push(muOp)
+            }
+            break
+          case '=':
+            if (line[i + 1] === '=') {
+              if (line[i + 2] === '=') {
+                let muOp = new OpUnit(i, j, '===', OpType.ROR)
+                this.opsPos.push(muOp)
+                j += 2
+              } else {
+                let muOp = new OpUnit(i, j, '==', OpType.ROR)
+                this.opsPos.push(muOp)
+                j++
+              }
+            }
+            break
+          case '!':
+            if (line[i + 1] === '=') {
+              let muOp = new OpUnit(i, j, '!=', OpType.ROR)
+              this.opsPos.push(muOp)
+              j++
+            } else {
+              let muOp = new OpUnit(i, j, '!', OpType.AORU)
+              this.opsPos.push(muOp)
+            }
+            break
+          default:
+            break
         }
       }
     }
+    console.log(this.opsPos)
   }
 }
 

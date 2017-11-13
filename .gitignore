@@ -4,3 +4,4 @@ Calculator/bin/
 *.class
 *.prefs
 *.project
+*.log

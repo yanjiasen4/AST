@@ -4,5 +4,10 @@ Calculator/bin/
 *.class
 *.prefs
 *.project
+<<<<<<< HEAD
 HW2/node_modules.rar
 ZhuHallMay.pdf
+=======
+*.log
+HW2/mutation/
+>>>>>>> c89440cc40147e4e429749c9747758d067d26654

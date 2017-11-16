@@ -21,5 +21,11 @@ export default {
   'LCR': 5,
   /* <TODO> ABS (Absolute Value Insertion) mutants --
      modify each arthmetic expression (and subexpression) by the function abs(), negAbs(), and faileOnZero() */
-  'minimumOps': ['AORB', 'AORS', 'AORU', 'ROR', 'UOI', 'LCR']
+  'minimumOps': ['AORB', 'AORS', 'AORU', 'ROR', 'LCR'],
+  'AORB_Op': ['+', '-', '*', '/', '%'],
+  'AORS_Op': ['+=', '-=', '*=', '/=', '%='],
+  'AORU_Op': ['++', '--'],
+  'ROR_Op': ['<', '>', '==', '!=', '<=', '>='],
+  'LCR_Op': ['&&', '||'],
+  'OpIndex': ['AORB_Op', 'AORS_Op', 'AORU_Op', 'ROR_Op', 'UOI', 'LCR_Op']
 }

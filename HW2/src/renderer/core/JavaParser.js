@@ -16,10 +16,11 @@ function JavaParser (data, config) {
   this.data = data
   this.config = config
   this.opsPos = []
+  this.opsStat = [0, 0, 0, 0, 0, 0]
 
   this.parseOps = function () {
     let inStarComment = false
-    for (let i in this.data) {
+    for (let i = 0; i < this.data.length; i++) {
       let line = this.data[i]
       // clear the front and back spaces
       let nline = line.trim()
@@ -54,7 +55,7 @@ function JavaParser (data, config) {
               let muOp = new OpUnit(i, j, '++', OpType.AORU)
               this.opsPos.push(muOp)
               j++
-            } else if (line[i + 1] === '=') {
+            } else if (line[j + 1] === '=') {
               let muOp = new OpUnit(i, j, '+=', OpType.AORS)
               this.opsPos.push(muOp)
               j++
@@ -64,11 +65,11 @@ function JavaParser (data, config) {
             }
             break
           case '-':
-            if (line[i + 1] === '-') {
+            if (line[j + 1] === '-') {
               let muOp = new OpUnit(i, j, '--', OpType.AORU)
               this.opsPos.push(muOp)
               j++
-            } else if (line[i + 1] === '=') {
+            } else if (line[j + 1] === '=') {
               let muOp = new OpUnit(i, j, '-=', OpType.AORS)
               this.opsPos.push(muOp)
               j++
@@ -78,7 +79,7 @@ function JavaParser (data, config) {
             }
             break
           case '*':
-            if (line[i + 1] === '=') {
+            if (line[j + 1] === '=') {
               let muOp = new OpUnit(i, j, '*=', OpType.AORS)
               this.opsPos.push(muOp)
               j++
@@ -88,7 +89,7 @@ function JavaParser (data, config) {
             }
             break
           case '/':
-            if (line[i + 1] === '=') {
+            if (line[j + 1] === '=') {
               let muOp = new OpUnit(i, j, '/=', OpType.AORS)
               this.opsPos.push(muOp)
               j++
@@ -98,7 +99,7 @@ function JavaParser (data, config) {
             }
             break
           case '%':
-            if (line[i + 1] === '=') {
+            if (line[j + 1] === '=') {
               let muOp = new OpUnit(i, j, '%=', OpType.AORS)
               this.opsPos.push(muOp)
               j++
@@ -108,21 +109,21 @@ function JavaParser (data, config) {
             }
             break
           case '|':
-            if (line[i + 1] === '|') {
+            if (line[j + 1] === '|') {
               let muOp = new OpUnit(i, j, '||', OpType.LCR)
               this.opsPos.push(muOp)
               j++
             }
             break
           case '&':
-            if (line[i + 1] === '&') {
+            if (line[j + 1] === '&') {
               let muOp = new OpUnit(i, j, '&&', OpType.LCR)
               this.opsPos.push(muOp)
               j++
             }
             break
           case '<':
-            if (line[i + 1] === '=') {
+            if (line[j + 1] === '=') {
               let muOp = new OpUnit(i, j, '<=', OpType.ROR)
               this.opsPos.push(muOp)
               j++
@@ -132,7 +133,7 @@ function JavaParser (data, config) {
             }
             break
           case '>':
-            if (line[i + 1] === '=') {
+            if (line[j + 1] === '=') {
               let muOp = new OpUnit(i, j, '>=', OpType.ROR)
               this.opsPos.push(muOp)
               j++
@@ -142,8 +143,8 @@ function JavaParser (data, config) {
             }
             break
           case '=':
-            if (line[i + 1] === '=') {
-              if (line[i + 2] === '=') {
+            if (line[j + 1] === '=') {
+              if (line[j + 2] === '=') {
                 let muOp = new OpUnit(i, j, '===', OpType.ROR)
                 this.opsPos.push(muOp)
                 j += 2
@@ -155,7 +156,7 @@ function JavaParser (data, config) {
             }
             break
           case '!':
-            if (line[i + 1] === '=') {
+            if (line[j + 1] === '=') {
               let muOp = new OpUnit(i, j, '!=', OpType.ROR)
               this.opsPos.push(muOp)
               j++
@@ -169,7 +170,11 @@ function JavaParser (data, config) {
         }
       }
     }
-    console.log(this.opsPos)
+
+    for (let op of this.opsPos) {
+      this.opsStat[op.opType]++
+    }
+    // console.log(this.opsPos)
   }
 }
 

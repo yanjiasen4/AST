@@ -12,13 +12,10 @@ export default {
     replace each occurrence of one of the relational operators
     (<, <=, >, >=, =, <>) by each of the other operators */
   'ROR': 3,
-  /* <TODO> UOI (Unary operator insertion) mutants --
-  inserts each unary operator (arithmetic +, arithmetic -, conditional !, logical ~) before each expression of the correct type */
-  'UOI': 4,
   /* <TODO> LCR (Logical connector replacement) mutants --
      replace each occurrence of one of the logical operators
      (&&, ||) by each of the other operators */
-  'LCR': 5,
+  'LCR': 4,
   /* <TODO> ABS (Absolute Value Insertion) mutants --
      modify each arthmetic expression (and subexpression) by the function abs(), negAbs(), and faileOnZero() */
   'minimumOps': ['AORB', 'AORS', 'AORU', 'ROR', 'LCR'],
@@ -27,5 +24,5 @@ export default {
   'AORU_Op': ['++', '--'],
   'ROR_Op': ['<', '>', '==', '!=', '<=', '>='],
   'LCR_Op': ['&&', '||'],
-  'OpIndex': ['AORB_Op', 'AORS_Op', 'AORU_Op', 'ROR_Op', 'UOI', 'LCR_Op']
+  'OpIndex': ['AORB_Op', 'AORS_Op', 'AORU_Op', 'ROR_Op', 'LCR_Op']
 }

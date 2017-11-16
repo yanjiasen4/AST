@@ -71,6 +71,29 @@ function Mutator (code, config) {
     }
   }
 
+  this.selectOpFromFunc = function (func, config) {
+    let funcName = this.javaParser.funcArray.indexOf(func)
+    let opStart = this.javaParser.funcOpMap[funcName]
+    let opEnd = this.javaParser.funcOpMap[funcName + 1]
+    let opsPos = this.javaParser.opsPos.slice(opStart, opEnd)
+    let opsSetting = []
+    for (let op of config.OpsSetting) {
+      opsSetting.push(OpType[op])
+    }
+    console.log(opsSetting)
+    let mutPos = randomPick(opsPos)
+    while (opsSetting.indexOf(mutPos.opType) === -1) {
+      mutPos = randomPick(opsPos)
+    }
+    return mutPos
+  }
+
+  this.genMutationFunc = function (func, id, opUnit) {
+    let nop = selectOps(opUnit.op, opUnit.opType)
+    let filename = this.filepath + '/MU_' + func + '_' + id.toString() + '_' + config.filename
+    this.writeMutation(filename, opUnit.line, opUnit.pos, opUnit.op, nop)
+  }
+
   this.getCode = function () {
     return this.javaParser.data
   }
@@ -88,6 +111,42 @@ function Mutator (code, config) {
       maxMutationNum += opsStat[index]
     }
     return maxMutationNum
+  }
+
+  this.getFuncOpCount = function () {
+    let ret = []
+    let funcOpMap = this.javaParser.funcOpMap
+    console.log(funcOpMap)
+    let funcArray = this.javaParser.funcArray
+    console.log(funcArray)
+    let opsPos = this.javaParser.opsPos
+    let index = 0
+    for (let i = 0; i < funcArray.length; i++) {
+      let funcName = funcArray[i]
+      let op = opsPos[index]
+      console.log(op)
+      let opCount = [0, 0, 0, 0, 0]
+      while (index < opsPos.length && op.funcCount <= i) {
+        opCount[op.opType]++
+        op = opsPos[index++]
+      }
+      let funcRes = {
+        name: funcName
+      }
+      for (let i = 0; i < OpType.minimumOps.length; i++) {
+        funcRes[OpType.minimumOps[i]] = opCount[i]
+      }
+      ret.push(funcRes)
+    }
+    let totalRes = {
+      name: '总计'
+    }
+    for (let i = 0; i < OpType.minimumOps.length; i++) {
+      totalRes[OpType.minimumOps[i]] = this.javaParser.opsStat[i]
+    }
+    ret.push(totalRes)
+
+    return ret
   }
 
   this.getOpCount = function () {

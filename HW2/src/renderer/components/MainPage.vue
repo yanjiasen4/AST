@@ -12,30 +12,37 @@
     </Upload>
     <p>{{ mutationSetting.filename }}</p>
     <transition name="fade">
-      <div v-if="hasUpdated" class="count">
-        <div class="count-header">
-          <p>变异操作符个数</p>
+      <div>
+        <div class="table-header">
+          <h2>可变异操作符个数统计</h2>
         </div>
-        <Row class="count-row">
-          <Col :span="8">
-            {{ mutationOps[0] }}: {{ opCount[0] }}
-          </Col>
-          <Col :span="8">
-            {{ mutationOps[1] }}: {{ opCount[1] }}
-          </Col>
-          <Col :span="8">
-            {{ mutationOps[2] }}: {{ opCount[2] }}
-          </Col>
-        </Row>
-        <Row class="count-row">
-          <Col :span="12">
-            {{ mutationOps[3] }}: {{ opCount[3] }}
-          </Col>
-          <Col :span="12">
-            {{ mutationOps[4] }}: {{ opCount[4] }}
-          </Col>
-        </Row>
+        <Table highlight-row ref="currentRowTable" :columns="columnsHead" :data="tableData" @on-current-change="tableChange"></Table>
+        <Button @click="handleClearCurrentRow" class="table-button">清除选择</Button>
       </div>
+        <!-- <div v-if="hasUpdated" class="count">
+          <div class="count-header">
+            <p>变异操作符个数</p>
+          </div>
+          <Row class="count-row">
+            <Col :span="8">
+              {{ mutationOps[0] }}: {{ opCount[0] }}
+            </Col>
+            <Col :span="8">
+              {{ mutationOps[1] }}: {{ opCount[1] }}
+            </Col>
+            <Col :span="8">
+              {{ mutationOps[2] }}: {{ opCount[2] }}
+            </Col>
+          </Row>
+          <Row class="count-row">
+            <Col :span="12">
+              {{ mutationOps[3] }}: {{ opCount[3] }}
+            </Col>
+            <Col :span="12">
+              {{ mutationOps[4] }}: {{ opCount[4] }}
+            </Col>
+          </Row>
+        </div> -->
     </transition>
     <Form ref="form" :model="mutationSetting" :rules="rule" :label-width="80">
       <FormItem label="变异操作符" prop="OpsSetting">
@@ -50,7 +57,6 @@
         <Button type="primary" @click="genMutation('form')">开始生成</Button>
       </div>
     </Form>
-    {{ mutationGenCount }}
   </div>
 </template>
 
@@ -87,7 +93,35 @@ export default {
       },
       javaCode: '',
       javaExt: ['java'],
-      opCount: [0, 0, 0, 0, 0]
+      opCount: [],
+      mutationGenCount: 0,
+      columnsHead: [
+        {
+          type: 'index',
+          width: 60,
+          align: 'center'
+        }, {
+          title: '函数名',
+          key: 'name'
+        }, {
+          title: 'AORB',
+          key: 'AORB'
+        }, {
+          title: 'AORS',
+          key: 'AORS'
+        }, {
+          title: 'AORU',
+          key: 'AORU'
+        }, {
+          title: 'ROR',
+          key: 'ROR'
+        }, {
+          title: 'LCR',
+          key: 'LCR'
+        }
+      ],
+      tableData: [],
+      currentRow: {}
     }
   },
   methods: {
@@ -107,14 +141,23 @@ export default {
       console.log(this.mutationSetting)
       let mutator = Mutator.createMutator(this.javaCode, this.mutationSetting)
       this.mutator = mutator
-      mutator.parse()
-      this.opCount = mutator.getOpCount()
+      this.mutator.parse()
+      this.tableData = this.mutator.getFuncOpCount()
+      this.opCount = this.mutator.getOpCount()
     },
     genMutation: function (name) {
-      console.log(name)
       this.$refs[name].validate((valid) => {
         if (valid) {
-          this.mutator.genMutation()
+          if (this.currentRow !== {} && this.currentRow.name === '总计') {
+            this.mutator.genMutation()
+          } else {
+            let funcName = this.currentRow.name
+            for (let i = 0; i < parseInt(this.mutationSetting.mutationNum); i++) {
+              let opUnit = this.mutator.selectOpFromFunc(funcName, this.mutationSetting)
+              this.mutator.genMutationFunc(funcName, i, opUnit)
+            }
+          }
+          this.$Message.success('生成完成!')
         } else {
           this.$Message.error('变异体个数过多!')
         }
@@ -123,11 +166,25 @@ export default {
     opsChange: function (id) {
       this.$refs['form'].validate((valid) => {
       })
+    },
+    handleClearCurrentRow: function () {
+      this.$refs.currentRowTable.clearCurrentRow()
+    },
+    tableChange: function (currentRow, oldCurrentRow) {
+      this.currentRow = currentRow
     }
   },
   computed: {
     maxMutationNum: function () {
-      return this.mutator.getMaxMutationNum(this.mutationSetting.OpsSetting)
+      if (this.currentRow === {} || (this.currentRow !== {} && this.currentRow.name === '总计')) {
+        return this.mutator.getMaxMutationNum(this.mutationSetting.OpsSetting)
+      } else {
+        let maxMutatNum = 0
+        for (let op of this.mutationSetting.OpsSetting) {
+          maxMutatNum += this.currentRow[op]
+        }
+        return maxMutatNum
+      }
     },
     hasUpdated: function () {
       return this.javaCode !== ''
@@ -141,7 +198,7 @@ export default {
   border: 1px solid #d7dde4;
   background: #f5f7f9;
   padding: 10px 20% 10px 20%;
-  height: 520px;
+  min-height: 520px;
 }
 
 .button {
@@ -161,5 +218,16 @@ export default {
 
 .count-row {
   padding-top: 20px;
+}
+
+.table-header {
+  border-bottom: 1px solid #eee;
+  text-align: center;
+  padding: 10px 0 4px 0;
+  margin: 10px 0 10px 0;
+}
+
+.table-button {
+  margin: 10px 0 20px 0;
 }
 </style>

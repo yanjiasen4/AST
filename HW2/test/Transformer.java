@@ -1,7 +1,7 @@
 
 public class Transformer {
 
-	double btod(String str){	//二进制到十进制的转换
+	double btod(String str){
 		int k = str.indexOf("."),m=0;
 		double p=0.0;
 		if(k ==-1)
@@ -22,7 +22,7 @@ public class Transformer {
 		return p;
 	}
 	
-	double otod(String str){	//八进制到十进制的转换
+	double otod(String str){
 		int k = str.indexOf("."),m=0;
 		double p=0.0;
 		if(k ==-1)
@@ -43,7 +43,7 @@ public class Transformer {
 		return p;
 	}
 	
-	double htod(String str){	//十六进制到十进制的转换
+	double htod(String str){
 		int k = str.indexOf("."),m=0;
 		double p=0.0;
 		if(k ==-1)

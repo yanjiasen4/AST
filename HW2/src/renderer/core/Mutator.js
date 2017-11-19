@@ -155,12 +155,12 @@ function Mutator (code, config) {
 
   this.writeMutation = function (filename, line, pos, op, nop) {
     let data = this.getCode()
+    let comment = '/* Fault：mutation insert code */\n'
     for (let i = 0; i < data.length; i++) {
       if (i === line) {
         let oldLine = '//'.concat(data[i]) + '\n'
         let newLine = data[i].substr(0, pos) + nop + data[i].substring(pos + op.length, data[i].length)
-        let content = oldLine + newLine
-        console.log(content)
+        let content = comment + oldLine + newLine
         fs.appendFileSync(filename, content, 'utf-8')
       } else {
         fs.appendFileSync(filename, data[i], 'utf-8')

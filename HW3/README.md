@@ -1,8 +1,8 @@
-# java-mutation
+# regression test
 
 > An automatically UT generate and excute tool use NodeJs.
 
-- [java-mutation](#java-mutation)
+- [regression test](#java-mutation)
     - [Introduction](#introduction)
     - [Xlsx Format](#xlsx-format)
     - [Pre-installation](#pre-installation)

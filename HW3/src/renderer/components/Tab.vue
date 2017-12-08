@@ -1,7 +1,7 @@
 <template>
   <div class="left-top">
     <ul>
-      <li v-for="(tag, index) in tags" :key="tag" :class="[activeTab == index ? activeClass : '', baseTag]">
+      <li v-for="(tag, index) in tags" :key="tag" :class="[activeTab == index ? activeClass : '', baseTag]" @click="tabRoute(index)">
         <span>{{ tag }}</span>
       </li>
     </ul>
@@ -17,6 +17,16 @@ export default {
       baseTag: 'tag-item',
       activeClass: 'active',
       tags: ['变异体生成', '测试程序生成']
+    }
+  },
+  methods: {
+    tabRoute: function (index) {
+      console.log(index)
+      if (index === 0) {
+        this.$router.push('/')
+      } else {
+        this.$router.push({ path: 'gen' })
+      }
     }
   }
 }

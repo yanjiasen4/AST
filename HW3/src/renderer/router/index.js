@@ -11,7 +11,7 @@ export default new Router({
       component: require('@/components/MainPage').default
     },
     {
-      path: 'gen',
+      path: '/gen',
       name: 'test-gen',
       component: require('@/components/TestGen').default
     },
